@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs')
 const jdenticon = require('jdenticon')
 const path = require('path')
 const fs = require('fs')
+const jwt = require('jsonwebtoken')
 
 const UserController = {
   register: async (req, res) => {
@@ -13,10 +14,10 @@ const UserController = {
     }
 
     try {
-      const isUserExist = await prisma.user.findUnique({where: {email}})
+      const isUserExist = !!(await prisma.user.findUnique({where: {email}}))
 
       if (isUserExist) {
-        return res.status(400).json({error: 'User has already exist'})
+        return res.status(400).json({error: 'User already exists'})
       }
 
       const hashedPassword = await bcrypt.hash(password, 10)
@@ -42,7 +43,32 @@ const UserController = {
     }
   },
   login: async (req, res) => {
-    res.send('login')
+    const {email, password} = req.body
+
+    if (!email || !password) {
+      return res.status(400).json('All fields required!')
+    }
+
+    try {
+      const user = await prisma.user.findUnique({where: {email}})
+
+      if (!user) {
+        return res.status(400).json({error: 'Email or password is incorrect'})
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password)
+
+      if (!isValidPassword) {
+        return res.status(400).json({error: 'Email or password is incorrect'})
+      }
+
+      const token = jwt.sign(({userId: user.id}), process.env.SECRET_KEY)
+
+      res.json({token})
+    } catch (error) {
+      console.error('Login error', error)
+      res.status(500).json({error: 'Internal server error'})
+    }
   },
   getUserById: async (req, res) => {
     res.send('getUserById')
