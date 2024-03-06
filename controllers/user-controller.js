@@ -71,7 +71,34 @@ const UserController = {
     }
   },
   current: async (req, res) => {
-    res.send('current')
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: req.user.userId
+        },
+        include: {
+          followers: {
+            include: {
+              follower: true
+            }
+          },
+          following: {
+            include: {
+              following: true
+            }
+          }
+        }
+      })
+
+      if (!user) {
+        return res.status(404).json({error: 'User not found'})
+      }
+
+      res.json(user)
+    } catch (error) {
+      console.error('Error of getting current user', error)
+      res.status(500).json({error: 'Internal server error'})
+    }
   },
   getUserById: async (req, res) => {
     const {id} = req.params
@@ -87,7 +114,7 @@ const UserController = {
       })
 
       if (!user) {
-        return res.status(404).json({error: 'User was not found'})
+        return res.status(404).json({error: 'User not found'})
       }
 
       const isFollowing = await prisma.follows.findFirst({
@@ -101,7 +128,7 @@ const UserController = {
 
       res.json({...user, isFollowing: Boolean(isFollowing)})
     } catch (error) {
-      console.error('Error of getting current user', error)
+      console.error('Error of getting user by id', error)
       res.status(500).json({error: 'Internal server error'})
     }
   },
