@@ -1,6 +1,6 @@
 const express = require('express')
 const multer = require('multer')
-const {UserController, PostController, CommentController} = require("../controllers")
+const {UserController, PostController, CommentController, LikeController} = require("../controllers")
 const {authenticateToken} = require('../middleware')
 const router = express.Router()
 
@@ -28,5 +28,8 @@ router.delete('/posts/:id', authenticateToken, PostController.deletePost)
 
 router.post('/comments', authenticateToken, CommentController.createComment)
 router.delete('/comments/:id', authenticateToken, CommentController.deleteComment)
+
+router.post('/likes', authenticateToken, LikeController.likePost)
+router.delete('/likes/:id', authenticateToken, LikeController.unlikePost)
 
 module.exports = router
