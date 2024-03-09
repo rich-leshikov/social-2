@@ -29,7 +29,23 @@ const LikeController = {
     }
   },
   unlikePost: async (req, res) => {
-    res.send('unlikePost')
+    const {id} = req.params
+    const userId = req.user.userId
+
+    try {
+      const like = await prisma.like.findFirst({where: {postId: id, userId}})
+
+      if (!like) {
+        return res.status(400).json({error: 'You do not like this post'})
+      }
+
+      await prisma.like.deleteMany({where: {postId: id, userId}})
+
+      res.json(like)
+    } catch (error) {
+      console.error('Delete like error', error)
+      res.status(500).json({error: 'Internal server error'})
+    }
   },
 }
 
