@@ -1,3 +1,3 @@
 export const Followers = () => {
-  return <div></div>
+  return <div>Followers</div>
 }

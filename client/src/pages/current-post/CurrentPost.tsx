@@ -1,3 +1,3 @@
 export const CurrentPost = () => {
-  return <div></div>
+  return <div>CurrentPost</div>
 }
