@@ -10,7 +10,7 @@ type ThemeProviderProps = {
   children: ReactNode
 }
 
-const ThemeContext = createContext<ThemeContextProps>({
+export const ThemeContext = createContext<ThemeContextProps>({
   theme: "dark",
   toggleTheme: () => null,
 })
