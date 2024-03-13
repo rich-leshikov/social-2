@@ -1,16 +1,22 @@
-import React from "react"
 import { createRoot } from "react-dom/client"
 import { App } from "./App"
 import "./index.css"
 import { NextUIProvider } from "@nextui-org/react"
+import { Provider } from "react-redux"
+import { store } from "./app/store"
+import { ThemeProvider } from "./components"
 
 const container = document.getElementById("root")
 
 if (container) {
   createRoot(container).render(
-    <NextUIProvider>
-      <App />
-    </NextUIProvider>,
+    <Provider store={store}>
+      <NextUIProvider>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </NextUIProvider>
+    </Provider>,
   )
 } else {
   throw new Error(
