@@ -15,7 +15,17 @@ type ButtonProps = {
   fullWidth?: boolean
   href?: string
   icon?: JSX.Element
+  isLoading: boolean
   type?: "button" | "submit" | "reset"
+  variant?:
+    | "solid"
+    | "bordered"
+    | "light"
+    | "flat"
+    | "faded"
+    | "shadow"
+    | "ghost"
+    | undefined
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -25,7 +35,9 @@ export const Button: FC<ButtonProps> = ({
   fullWidth,
   href,
   icon,
+  isLoading,
   type,
+  variant = "solid",
 }) => {
   return (
     <NextButton
@@ -36,7 +48,8 @@ export const Button: FC<ButtonProps> = ({
       size={"lg"}
       startContent={icon}
       type={type}
-      variant={"light"}
+      variant={variant}
+      isLoading={isLoading}
     >
       {children}
     </NextButton>
