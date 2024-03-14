@@ -1,10 +1,11 @@
 import type { FC } from "react"
 import { useForm } from "react-hook-form"
-import { Button, Input } from "../../components"
+import { Button, ErrorMessage, Input } from "../../components"
 import { Link } from "@nextui-org/react"
 import { useLazyCurrentQuery, useLoginMutation } from "../../app"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { hasErrorField } from "../../common"
 
 type Login = {
   email: string
@@ -37,8 +38,12 @@ export const Login: FC<LoginProps> = ({ setSelected }) => {
   const onSubmit = async (data: Login) => {
     try {
       await login(data).unwrap()
+      await triggerCurrentQuery()
+      navigate("/")
     } catch (error) {
-      console.log("login error")
+      if (hasErrorField(error)) {
+        setError(error.data.error)
+      }
     }
   }
 
@@ -64,6 +69,7 @@ export const Login: FC<LoginProps> = ({ setSelected }) => {
         control={control}
         required={"Required field"}
       />
+      <ErrorMessage error={error} />
       <p className="text-center text-small">
         Have no account?{" "}
         <Link size={"sm"} className={"cursor-pointer"} onPress={onSetSelected}>
