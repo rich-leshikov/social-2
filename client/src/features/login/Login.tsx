@@ -2,6 +2,9 @@ import type { FC } from "react"
 import { useForm } from "react-hook-form"
 import { Button, Input } from "../../components"
 import { Link } from "@nextui-org/react"
+import { useLazyCurrentQuery, useLoginMutation } from "../../app"
+import { useNavigate } from "react-router-dom"
+import { useState } from "react"
 
 type Login = {
   email: string
@@ -26,10 +29,27 @@ export const Login: FC<LoginProps> = ({ setSelected }) => {
     },
   })
 
+  const [login, { isLoading }] = useLoginMutation()
+  const navigate = useNavigate()
+  const [error, setError] = useState("")
+  const [triggerCurrentQuery] = useLazyCurrentQuery()
+
+  const onSubmit = async (data: Login) => {
+    try {
+      await login(data).unwrap()
+    } catch (error) {
+      console.log("login error")
+    }
+  }
+
   const onSetSelected = () => setSelected("sign-up")
 
   return (
-    <form className={"flex flex-col gap-4"} action="">
+    <form
+      className={"flex flex-col gap-4"}
+      action=""
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <Input
         name={"email"}
         label={"Email"}
@@ -51,7 +71,12 @@ export const Login: FC<LoginProps> = ({ setSelected }) => {
         </Link>
       </p>
       <div className="flex gap-2 justify-end">
-        <Button fullWidth color={"primary"} type={"submit"}>
+        <Button
+          fullWidth
+          color={"primary"}
+          type={"submit"}
+          isLoading={isLoading}
+        >
           Sign in
         </Button>
       </div>
