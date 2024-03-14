@@ -1,10 +1,9 @@
-import { Button, Input } from "../../components"
+import { Button, ErrorMessage, Input } from "../../components"
 import { Link } from "@nextui-org/react"
-import { useLazyCurrentQuery, useRegisterMutation } from "../../app"
+import { useRegisterMutation } from "../../app"
 import type { FC } from "react"
-import { useForm } from "react-hook-form"
-import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { useForm } from "react-hook-form"
 import { hasErrorField } from "../../common"
 
 type Register = {
@@ -33,9 +32,7 @@ export const Register: FC<RegisterProps> = ({ setSelected }) => {
   })
 
   const [register, { isLoading }] = useRegisterMutation()
-  const navigate = useNavigate()
   const [error, setError] = useState("")
-  const [triggerCurrentQuery] = useLazyCurrentQuery()
 
   const onSetSelected = () => setSelected("sign-in")
 
@@ -44,7 +41,6 @@ export const Register: FC<RegisterProps> = ({ setSelected }) => {
       await register(data).unwrap()
       onSetSelected()
     } catch (error) {
-      console.log("register error")
       if (hasErrorField(error)) {
         setError(error.data.error)
       }
@@ -78,6 +74,7 @@ export const Register: FC<RegisterProps> = ({ setSelected }) => {
         control={control}
         required={"Required field"}
       />
+      <ErrorMessage error={error} />
       <p className="text-center text-small">
         Have an account?{" "}
         <Link size={"sm"} className={"cursor-pointer"} onPress={onSetSelected}>
