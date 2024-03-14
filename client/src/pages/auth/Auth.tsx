@@ -4,7 +4,7 @@ import { Card, CardBody, Tab, Tabs } from "@nextui-org/react"
 import { Login, Register } from "../../features"
 
 export const Auth = () => {
-  const [selected, setSelected] = useState("login")
+  const [selected, setSelected] = useState("sign-in")
 
   const onSelectionChange = (key: Key) => setSelected(key as string)
 
@@ -19,7 +19,7 @@ export const Auth = () => {
               selectedKey={selected}
               onSelectionChange={onSelectionChange}
             >
-              <Tab key={"login"} title={"Sign in"}>
+              <Tab key={"sign-in"} title={"Sign in"}>
                 <Login setSelected={onSelectionChange} />
               </Tab>
               <Tab key={"sign-up"} title={"Sign up"}>
