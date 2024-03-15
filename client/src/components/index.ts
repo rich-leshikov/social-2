@@ -1,5 +1,6 @@
 export * from "./button"
 export * from "./container"
+export * from "./create-post"
 export * from "./error-message"
 export * from "./header"
 export * from "./input"

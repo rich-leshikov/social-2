@@ -1,3 +1,14 @@
+import { useGetAllPostsQuery } from "../../app"
+import { CreatePost } from "../../components"
+
 export const Posts = () => {
-  return <div>Posts</div>
+  const { data } = useGetAllPostsQuery()
+
+  return (
+    <>
+      <div className="mb-10 w-full">
+        <CreatePost />
+      </div>
+    </>
+  )
 }
