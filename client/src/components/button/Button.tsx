@@ -1,55 +1,26 @@
-import type { JSX, ReactNode, FC } from "react"
+import type { FC, JSX } from "react"
+import type { ButtonProps as NextButtonProps } from "@nextui-org/react"
 import { Button as NextButton } from "@nextui-org/react"
 
 type ButtonProps = {
-  children: ReactNode
-  className?: string
-  color?:
-    | "default"
-    | "primary"
-    | "secondary"
-    | "success"
-    | "warning"
-    | "danger"
-    | undefined
-  fullWidth?: boolean
-  href?: string
   icon?: JSX.Element
-  isLoading: boolean
-  type?: "button" | "submit" | "reset"
-  variant?:
-    | "solid"
-    | "bordered"
-    | "light"
-    | "flat"
-    | "faded"
-    | "shadow"
-    | "ghost"
-    | undefined
-}
+} & NextButtonProps
 
 export const Button: FC<ButtonProps> = ({
   children,
-  className,
-  color,
-  fullWidth,
-  href,
-  icon,
-  isLoading,
-  type,
+  color = "default",
   variant = "solid",
+  size = "lg",
+  icon,
+  ...restProps
 }) => {
   return (
     <NextButton
-      className={className}
       color={color}
-      fullWidth={fullWidth}
-      href={href}
-      size={"lg"}
-      startContent={icon}
-      type={type}
       variant={variant}
-      isLoading={isLoading}
+      size={size}
+      startContent={icon}
+      {...restProps}
     >
       {children}
     </NextButton>
