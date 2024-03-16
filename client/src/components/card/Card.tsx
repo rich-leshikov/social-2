@@ -7,6 +7,7 @@ import {
   Spinner,
 } from "@nextui-org/react"
 import type { FC } from "react"
+import { useState } from "react"
 import {
   useDeleteCommentMutation,
   useDeletePostMutation,
@@ -15,13 +16,11 @@ import {
   useLikePostMutation,
   useUnlikePostMutation,
 } from "../../app"
-import { useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useSelector } from "react-redux"
 import { selectCurrent } from "../../features"
 import { User } from "../user"
-import { formatToClientDate } from "../../common"
-import { Button } from "../button"
+import { formatToClientDate, hasErrorField } from "../../common"
 import { RiDeleteBinLine } from "react-icons/ri"
 import { Typography } from "../typography"
 import { MetaInfo } from "../meta-info"
@@ -64,6 +63,62 @@ export const Card: FC<CardProps> = ({
   const navigate = useNavigate()
   const currentUser = useSelector(selectCurrent)
 
+  const refetchPosts = async () => {
+    switch (cardFor) {
+      case "current-post":
+        await triggerGetPostById(id).unwrap()
+        break
+      case "post":
+        await triggerGetAllPosts().unwrap()
+        break
+      case "comment":
+        await triggerGetPostById(id).unwrap()
+        break
+      default:
+        throw new Error("Wrong argument cardFor")
+    }
+  }
+
+  const onDelete = async () => {
+    try {
+      switch (cardFor) {
+        case "current-post":
+          await deletePost(id).unwrap()
+          navigate("/")
+          break
+        case "post":
+          await deletePost(id).unwrap()
+          await refetchPosts()
+          break
+        case "comment":
+          await deleteComment(commentId).unwrap()
+          await refetchPosts()
+          break
+        default:
+          throw new Error("Wrong argument cardFor")
+      }
+    } catch (error) {
+      if (hasErrorField(error)) {
+        setError(error.data.error)
+      } else {
+        setError(error as string)
+      }
+    }
+  }
+
+  const onLike = async () => {
+    try {
+      likedByUser ? await unlikePost(id).unwrap() : await likePost(id).unwrap()
+      await refetchPosts()
+    } catch (error) {
+      if (hasErrorField(error)) {
+        setError(error.data.error)
+      } else {
+        setError(error as string)
+      }
+    }
+  }
+
   return (
     <NextCard className={"mb-5"}>
       <CardHeader className={"justify-between items-center bg-transparent"}>
@@ -75,16 +130,8 @@ export const Card: FC<CardProps> = ({
             description={createdAt && formatToClientDate(createdAt)}
           />
         </Link>
-        {/*{authorId === currentUser?.id &&*/}
-        {/*  (deletePostStatus.isLoading || deleteCommentStatus.isLoading ? (*/}
-        {/*    <Spinner />*/}
-        {/*  ) : (*/}
-        {/*    <Button>*/}
-        {/*      <RiDeleteBinLine />*/}
-        {/*    </Button>*/}
-        {/*  ))}*/}
         {authorId === currentUser?.id && (
-          <div className={"cursor-pointer"}>
+          <div className={"cursor-pointer"} onClick={onDelete}>
             {deletePostStatus.isLoading || deleteCommentStatus.isLoading ? (
               <Spinner />
             ) : (
@@ -99,7 +146,7 @@ export const Card: FC<CardProps> = ({
       {cardFor !== "comment" && (
         <CardFooter className={"gap-3"}>
           <div className="flex gap-5 items-center">
-            <div>
+            <div onClick={onLike}>
               <MetaInfo
                 count={likesCount}
                 Icon={likedByUser ? FcDislike : MdOutlineFavoriteBorder}
