@@ -1,6 +1,7 @@
 export * from "./button"
 export * from "./card"
 export * from "./container"
+export * from "./count-info"
 export * from "./create-comment"
 export * from "./create-post"
 export * from "./error-message"
