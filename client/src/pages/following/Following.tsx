@@ -1,3 +1,38 @@
+import { useSelector } from "react-redux"
+import { selectCurrent } from "../../features"
+import { GoBack, User } from "../../components"
+import { Link } from "react-router-dom"
+import { Card, CardBody } from "@nextui-org/react"
+
 export const Following = () => {
-  return <div>Following</div>
+  const currentUser = useSelector(selectCurrent)
+
+  if (!currentUser) {
+    return null
+  }
+
+  return (
+    <>
+      <GoBack />
+      {currentUser.following.length > 0 ? (
+        <div className={"gap-5 flex flex-col"}>
+          {currentUser.following.map(user => (
+            <Link to={`/users/${user.following.id}`} key={user.following.id}>
+              <Card>
+                <CardBody className={"block"}>
+                  <User
+                    name={user.following.name ?? ""}
+                    avatarUrl={user.following.avatarUrl ?? ""}
+                    description={user.following.email ?? ""}
+                  />
+                </CardBody>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <h2>You have no following</h2>
+      )}
+    </>
+  )
 }
