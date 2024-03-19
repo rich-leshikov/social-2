@@ -91,7 +91,10 @@ export const UserProfile = () => {
             )}
           </div>
         </Card>
-        <Card className={"flex flex-col space-y-4 p-5 flex-1"}>
+        <Card
+          className={"flex flex-col space-y-4 p-5 flex-1"}
+          style={{ height: "22rem" }}
+        >
           <ProfileInfo title={"Email"} info={data.email} />
           <ProfileInfo title={"Location"} info={data.location} />
           <ProfileInfo
