@@ -10,7 +10,13 @@ import {
   useUnfollowUserMutation,
 } from "../../app"
 import { useEffect } from "react"
-import { Button, CountInfo, GoBack, ProfileInfo } from "../../components"
+import {
+  Button,
+  CountInfo,
+  EditProfile,
+  GoBack,
+  ProfileInfo,
+} from "../../components"
 import { BASE_URL, formatToClientDate } from "../../common"
 import {
   MdOutlinePersonAddAlt1,
@@ -33,6 +39,18 @@ export const UserProfile = () => {
   useEffect(() => {
     dispatch(resetUser())
   }, [])
+
+  const onCloseModal = async () => {
+    try {
+      if (id) {
+        await triggerGetUserByIdQuery(id)
+        await triggerCurrentQuery()
+        onClose()
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   if (!data) {
     return null
@@ -87,7 +105,9 @@ export const UserProfile = () => {
                 {data.isFollowing ? "Unfollow" : "Follow"}
               </Button>
             ) : (
-              <Button endContent={<CiEdit />}>Edit</Button>
+              <Button endContent={<CiEdit />} onClick={onOpen}>
+                Edit
+              </Button>
             )}
           </div>
         </Card>
@@ -108,6 +128,7 @@ export const UserProfile = () => {
           </div>
         </Card>
       </div>
+      <EditProfile isOpen={isOpen} onClose={onCloseModal} user={data} />
     </>
   )
 }
